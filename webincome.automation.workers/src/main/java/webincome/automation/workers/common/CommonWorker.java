@@ -11,6 +11,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -158,6 +160,11 @@ public abstract class CommonWorker {
 	public abstract Boolean doWork();
 	
 	protected WebDriverWait wait = null;
+	
+	protected List<WebElement> findByCss(String css) {
+		By by = By.cssSelector(css);
+		return driver.findElements(by);
+	}
 
 	protected WebElement untilClickableById(String id) {
 		By by = By.id(id);
@@ -184,6 +191,29 @@ public abstract class CommonWorker {
 		return driver.findElement(by);
 	}
 	
+	protected java.awt.image.BufferedImage getElementScreenshot(WebElement ele) {
+		try {
+			// Get entire page screenshot
+			File screenshot = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			java.awt.image.BufferedImage fullImg = ImageIO.read(screenshot);
+	
+			// Get the location of element on the page
+			org.openqa.selenium.Point point = ele.getLocation();
+	
+			// Get width and height of the element
+			int eleWidth = ele.getSize().getWidth();
+			int eleHeight = ele.getSize().getHeight();
+	
+			// Crop the entire page screenshot to get only element screenshot
+			java.awt.image.BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(),
+			    eleWidth, eleHeight);
+			return eleScreenshot;
+		} catch (Exception e) {
+			LOG.error("Exception", e);
+			return null;
+		}
+	}
+
 	protected void randomSleep(int min, int max) {
 		int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
 		sleep(randomNum);	
