@@ -1,9 +1,8 @@
 # About
-=============================
 Library for automation of "work in the internet for everyone" - i.e. ppc and so on
 
 # Usage Example
-=============================
+```java
 public class App {
 	final static Logger LOG = LoggerFactory.getLogger(App.class);
 	
@@ -91,3 +90,4 @@ public class App {
 		} while (retryFutures.size() > 0);		
 	}
 }
+```
